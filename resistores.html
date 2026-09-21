@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Resistores - Diego Cruz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000080;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 0, 255, 0.03),
+                    rgba(255, 0, 255, 0.03) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            color: #00ff00;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 9999;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 3px solid #00ff00;
+            background-color: #000000;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px rgba(0, 255, 0, 0.1);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed #00ff00;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #ffff00;
+            font-size: 32px;
+            text-shadow: 2px 2px #ff00ff;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            color: #00ffff;
+            font-size: 12px;
+        }
+
+        .back-link a {
+            color: #00ffff;
+            text-decoration: none;
+            border: 1px solid #00ffff;
+            padding: 2px 5px;
+        }
+
+        .back-link a:hover {
+            background-color: #00ffff;
+            color: #000000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        table.cores {
+            background-color: #001100;
+            border: 2px solid #00ff00;
+        }
+
+        table.valores {
+            background-color: #001100;
+            border: 2px solid #00ff00;
+        }
+
+        th {
+            background-color: #00ff00;
+            color: #000000;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #00ff00;
+        }
+
+        td {
+            padding: 8px 10px;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+
+        tr:nth-child(even) {
+            background-color: #000000;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #001100;
+        }
+
+        tr:hover {
+            background-color: #003300;
+            color: #ffff00;
+        }
+
+        .cor-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #cccccc;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .valor {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .categoria {
+            color: #ffff00;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 16px;
+            border-bottom: 2px solid #ffff00;
+            padding-bottom: 8px;
+        }
+
+        .info-box {
+            border: 2px solid #00ff00;
+            padding: 12px;
+            margin: 15px 0;
+            background-color: #001100;
+        }
+
+        .info-title {
+            color: #ffff00;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .info-content {
+            color: #00ccff;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .formula {
+            background-color: #000000;
+            border-left: 3px solid #ffff00;
+            padding: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            color: #ffff00;
+        }
+
+        .exemplo {
+            background-color: #003300;
+            border-left: 3px solid #00ffff;
+            padding: 8px;
+            margin: 10px 0;
+            color: #00ffff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #00ff00;
+            color: #00ffff;
+            font-size: 12px;
+        }
+
+        .subtabela {
+            font-size: 12px;
+            color: #00ccff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⊠ TABELA DE RESISTORES</h1>
+            <p style="color: #00ffff; margin-top: 5px;">Código de Cores e Valores Padrão</p>
+            <div class="back-link" style="margin-top: 10px;">
+                <a href="index.html">◄ Voltar ao Início</a>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-title">ℹ Código de Cores - 4 Faixas</div>
+            <div class="info-content">
+                A maioria dos resistores usa 4 faixas coloridas para indicar o valor:
+                <br><strong>Faixa 1:</strong> Primeiro dígito
+                <br><strong>Faixa 2:</strong> Segundo dígito
+                <br><strong>Faixa 3:</strong> Multiplicador (×10^n)
+                <br><strong>Faixa 4:</strong> Tolerância (precisão)
+            </div>
+        </div>
+
+        <div class="categoria">▶ Tabela de Cores</div>
+
+        <table class="cores">
+            <thead>
+                <tr>
+                    <th>Cor</th>
+                    <th>Dígito</th>
+                    <th>Multiplicador</th>
+                    <th>Tolerância</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #000000;"></span> Preto</td>
+                    <td><span class="valor">0</span></td>
+                    <td>×10<sup>0</sup> (×1)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #8B4513;"></span> Marrom</td>
+                    <td><span class="valor">1</span></td>
+                    <td>×10<sup>1</sup> (×10)</td>
+                    <td>±1%</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #FF0000;"></span> Vermelho</td>
+                    <td><span class="valor">2</span></td>
+                    <td>×10<sup>2</sup> (×100)</td>
+                    <td>±2%</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #FFA500;"></span> Laranja</td>
+                    <td><span class="valor">3</span></td>
+                    <td>×10<sup>3</sup> (×1k)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #FFFF00;"></span> Amarelo</td>
+                    <td><span class="valor">4</span></td>
+                    <td>×10<sup>4</sup> (×10k)</td>
+                    <td>±5%</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #00AA00;"></span> Verde</td>
+                    <td><span class="valor">5</span></td>
+                    <td>×10<sup>5</sup> (×100k)</td>
+                    <td>±0.5%</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #4169E1;"></span> Azul</td>
+                    <td><span class="valor">6</span></td>
+                    <td>×10<sup>6</sup> (×1M)</td>
+                    <td>±0.25%</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #9400D3;"></span> Violeta</td>
+                    <td><span class="valor">7</span></td>
+                    <td>×10<sup>7</sup> (×10M)</td>
+                    <td>±0.1%</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #808080;"></span> Cinza</td>
+                    <td><span class="valor">8</span></td>
+                    <td>×10<sup>8</sup></td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #FFFFFF; border: 2px solid #cccccc;"></span> Branco</td>
+                    <td><span class="valor">9</span></td>
+                    <td>×10<sup>9</sup></td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #C0C0C0;"></span> Prata</td>
+                    <td>-</td>
+                    <td>×10<sup>-1</sup> (÷10)</td>
+                    <td>±10%</td>
+                </tr>
+                <tr>
+                    <td><span class="cor-box" style="background-color: #FFD700;"></span> Ouro</td>
+                    <td>-</td>
+                    <td>×10<sup>-2</sup> (÷100)</td>
+                    <td>±5%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="categoria">▶ Como Calcular o Valor</div>
+
+        <div class="info-box">
+            <div class="info-title">Fórmula</div>
+            <div class="formula">
+                Valor (Ω) = (1ª faixa × 10 + 2ª faixa) × (multiplicador da 3ª faixa)
+            </div>
+            <div class="info-title" style="margin-top: 15px;">Exemplo 1:</div>
+            <div class="exemplo">
+                Resistor com faixas: Marrom - Preto - Vermelho - Ouro
+                <br><br>
+                1ª faixa (Marrom) = 1
+                <br>2ª faixa (Preto) = 0
+                <br>3ª faixa (Vermelho) = ×10² (×100)
+                <br>4ª faixa (Ouro) = ±5% (tolerância)
+                <br><br>
+                <strong>Valor = (1 × 10 + 0) × 100 = 10 × 100 = 1000Ω (1kΩ ±5%)</strong>
+            </div>
+            <div class="info-title" style="margin-top: 15px;">Exemplo 2:</div>
+            <div class="exemplo">
+                Resistor com faixas: Amarelo - Violeta - Laranja - Vermelho
+                <br><br>
+                1ª faixa (Amarelo) = 4
+                <br>2ª faixa (Violeta) = 7
+                <br>3ª faixa (Laranja) = ×10³ (×1000)
+                <br>4ª faixa (Vermelho) = ±2%
+                <br><br>
+                <strong>Valor = (4 × 10 + 7) × 1000 = 47 × 1000 = 47000Ω (47kΩ ±2%)</strong>
+            </div>
+        </div>
+
+        <div class="categoria">▶ Valores Padrão Comuns (E12)</div>
+
+        <p style="margin-bottom: 10px; color: #00ccff; font-size: 12px;">
+            Série E12 - com tolerância de ±10% (12 valores por década)
+        </p>
+
+        <table class="valores">
+            <thead>
+                <tr>
+                    <th>Série Base</th>
+                    <th>×1</th>
+                    <th>×10</th>
+                    <th>×100</th>
+                    <th>×1k</th>
+                    <th>×10k</th>
+                    <th>×100k</th>
+                    <th>×1M</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="valor">10</span></td>
+                    <td>10Ω</td>
+                    <td>100Ω</td>
+                    <td>1kΩ</td>
+                    <td>10kΩ</td>
+                    <td>100kΩ</td>
+                    <td>1MΩ</td>
+                    <td>10MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">12</span></td>
+                    <td>12Ω</td>
+                    <td>120Ω</td>
+                    <td>1.2kΩ</td>
+                    <td>12kΩ</td>
+                    <td>120kΩ</td>
+                    <td>1.2MΩ</td>
+                    <td>12MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">15</span></td>
+                    <td>15Ω</td>
+                    <td>150Ω</td>
+                    <td>1.5kΩ</td>
+                    <td>15kΩ</td>
+                    <td>150kΩ</td>
+                    <td>1.5MΩ</td>
+                    <td>15MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">18</span></td>
+                    <td>18Ω</td>
+                    <td>180Ω</td>
+                    <td>1.8kΩ</td>
+                    <td>18kΩ</td>
+                    <td>180kΩ</td>
+                    <td>1.8MΩ</td>
+                    <td>18MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">22</span></td>
+                    <td>22Ω</td>
+                    <td>220Ω</td>
+                    <td>2.2kΩ</td>
+                    <td>22kΩ</td>
+                    <td>220kΩ</td>
+                    <td>2.2MΩ</td>
+                    <td>22MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">27</span></td>
+                    <td>27Ω</td>
+                    <td>270Ω</td>
+                    <td>2.7kΩ</td>
+                    <td>27kΩ</td>
+                    <td>270kΩ</td>
+                    <td>2.7MΩ</td>
+                    <td>27MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">33</span></td>
+                    <td>33Ω</td>
+                    <td>330Ω</td>
+                    <td>3.3kΩ</td>
+                    <td>33kΩ</td>
+                    <td>330kΩ</td>
+                    <td>3.3MΩ</td>
+                    <td>33MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">39</span></td>
+                    <td>39Ω</td>
+                    <td>390Ω</td>
+                    <td>3.9kΩ</td>
+                    <td>39kΩ</td>
+                    <td>390kΩ</td>
+                    <td>3.9MΩ</td>
+                    <td>39MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">47</span></td>
+                    <td>47Ω</td>
+                    <td>470Ω</td>
+                    <td>4.7kΩ</td>
+                    <td>47kΩ</td>
+                    <td>470kΩ</td>
+                    <td>4.7MΩ</td>
+                    <td>47MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">56</span></td>
+                    <td>56Ω</td>
+                    <td>560Ω</td>
+                    <td>5.6kΩ</td>
+                    <td>56kΩ</td>
+                    <td>560kΩ</td>
+                    <td>5.6MΩ</td>
+                    <td>56MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">68</span></td>
+                    <td>68Ω</td>
+                    <td>680Ω</td>
+                    <td>6.8kΩ</td>
+                    <td>68kΩ</td>
+                    <td>680kΩ</td>
+                    <td>6.8MΩ</td>
+                    <td>68MΩ</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">82</span></td>
+                    <td>82Ω</td>
+                    <td>820Ω</td>
+                    <td>8.2kΩ</td>
+                    <td>82kΩ</td>
+                    <td>820kΩ</td>
+                    <td>8.2MΩ</td>
+                    <td>82MΩ</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>© 2026 Diego Cruz | Referência Retro de Eletrônica</p>
+            <p style="margin-top: 10px;">
+                <a href="index.html" style="color: #ffff00; text-decoration: none;">Home</a> |
+                <a href="transistores.html" style="color: #ffff00; text-decoration: none;">Transistores</a> |
+                <a href="awg.html" style="color: #ffff00; text-decoration: none;">AWG</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

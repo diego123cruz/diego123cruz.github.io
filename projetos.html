@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Projetos - Diego Cruz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000080;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 0, 255, 0.03),
+                    rgba(255, 0, 255, 0.03) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            color: #00ff00;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 9999;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 3px solid #00ff00;
+            background-color: #000000;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px rgba(0, 255, 0, 0.1);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed #00ff00;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #ffff00;
+            font-size: 32px;
+            text-shadow: 2px 2px #ff00ff;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            color: #00ffff;
+            font-size: 12px;
+        }
+
+        .back-link a {
+            color: #00ffff;
+            text-decoration: none;
+            border: 1px solid #00ffff;
+            padding: 2px 5px;
+        }
+
+        .back-link a:hover {
+            background-color: #00ffff;
+            color: #000000;
+        }
+
+        .projeto {
+            margin-bottom: 20px;
+            border: 2px solid #00ff00;
+            padding: 12px;
+            background-color: #001100;
+        }
+
+        .projeto-titulo {
+            background-color: #00ff00;
+            color: #000000;
+            padding: 5px 8px;
+            margin: -12px -12px 10px -12px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .projeto-link {
+            color: #ffff00;
+            text-decoration: none;
+            margin-bottom: 5px;
+        }
+
+        .projeto-link:hover {
+            text-decoration: underline;
+            color: #ffffff;
+        }
+
+        .projeto-desc {
+            color: #00ccff;
+            font-size: 13px;
+            margin: 8px 0;
+            font-style: italic;
+        }
+
+        .projeto-lang {
+            color: #ff00ff;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .projeto-stats {
+            color: #ffff00;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #00ff00;
+            color: #00ffff;
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: #ffff00;
+            text-decoration: none;
+        }
+
+        .divider {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #00ff00, transparent);
+            margin: 15px 0;
+        }
+
+        .category-title {
+            color: #ffff00;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ffff00;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MEUS PROJETOS</h1>
+            <div class="back-link">
+                <a href="index.html">◄ Voltar ao Início</a>
+            </div>
+        </div>
+
+        <p style="text-align: center; color: #00ffff; margin-bottom: 20px;">
+            Clique nos projetos para ir ao repositório no GitHub
+        </p>
+
+        <div class="category-title">▶ PRINCIPAIS PROJETOS Z80</div>
+
+        <div class="projeto">
+            <div class="projeto-titulo">Z80Mini</div>
+            <a href="https://github.com/diego123cruz/Z80Mini" target="_blank" class="projeto-link">
+                ► Z80Mini Repository
+            </a>
+            <div class="projeto-desc">
+                Z80 Mini - Computador Z80 de placa única com ROM monitor e software
+            </div>
+            <div class="projeto-lang">Linguagem: Assembly</div>
+            <div class="projeto-stats">⭐ 18 stars | 1 fork</div>
+        </div>
+
+        <div class="projeto">
+            <div class="projeto-titulo">Z80_microprocessador</div>
+            <a href="https://github.com/diego123cruz/Z80_microprocessador" target="_blank" class="projeto-link">
+                ► Z80_microprocessador Repository
+            </a>
+            <div class="projeto-desc">
+                Computador didático com microprocessador Z80
+            </div>
+            <div class="projeto-lang">Linguagem: Assembly</div>
+            <div class="projeto-stats">⭐ 7 stars | 1 fork</div>
+        </div>
+
+        <div class="projeto">
+            <div class="projeto-titulo">Z80CPM</div>
+            <a href="https://github.com/diego123cruz/Z80CPM" target="_blank" class="projeto-link">
+                ► Z80CPM Repository
+            </a>
+            <div class="projeto-desc">
+                Computador Z80 CPU rodando CP/M (Control Program for Microcomputers)
+            </div>
+            <div class="projeto-lang">Linguagem: Assembly</div>
+            <div class="projeto-stats">⭐ 5 stars | 1 fork</div>
+        </div>
+
+        <div class="categoria-title">▶ FIRMWARE & ROM</div>
+
+        <div class="projeto">
+            <div class="projeto-titulo">NASCOM_BASIC_4.7</div>
+            <a href="https://github.com/diego123cruz/NASCOM_BASIC_4.7" target="_blank" class="projeto-link">
+                ► NASCOM_BASIC_4.7 Repository
+            </a>
+            <div class="projeto-desc">
+                NASCOM ROM BASIC Version 4.7 - (C) 1978 Microsoft
+            </div>
+            <div class="projeto-lang">Linguagem: Assembly</div>
+        </div>
+
+        <div class="projeto">
+            <div class="projeto-titulo">TK85_ROM_AT28C64</div>
+            <a href="https://github.com/diego123cruz/TK85_ROM_AT28C64" target="_blank" class="projeto-link">
+                ► TK85_ROM_AT28C64 Repository
+            </a>
+            <div class="projeto-desc">
+                TK85 Original com memória EEPROM (AT28C64)
+            </div>
+            <div class="projeto-lang">Linguagem: Assembly</div>
+        </div>
+
+        <div class="categoria-title">▶ APLICAÇÕES & UTILITÁRIOS</div>
+
+        <div class="projeto">
+            <div class="projeto-titulo">z80-apps</div>
+            <a href="https://github.com/diego123cruz/z80-apps" target="_blank" class="projeto-link">
+                ► z80-apps Repository
+            </a>
+            <div class="projeto-desc">
+                Aplicações e utilitários para o microprocessador Z80 e computador RC2014
+            </div>
+            <div class="projeto-lang">Linguagem: Assembly</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <p style="color: #00ccff; font-size: 12px; margin-top: 20px;">
+            💡 Dica: Visite <a href="https://github.com/diego123cruz" target="_blank" 
+            style="color: #ffff00; text-decoration: none;">meu GitHub</a> para ver todos os 28+ repositórios!
+        </p>
+
+        <div class="footer">
+            <p>© 2026 Diego Cruz | Site Retro</p>
+            <p style="margin-top: 10px;"><a href="index.html">Home</a></p>
+        </div>
+    </div>
+</body>
+</html>

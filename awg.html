@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela AWG - Diego Cruz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000080;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 0, 255, 0.03),
+                    rgba(255, 0, 255, 0.03) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            color: #00ff00;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 9999;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 3px solid #00ff00;
+            background-color: #000000;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px rgba(0, 255, 0, 0.1);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed #00ff00;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #ffff00;
+            font-size: 32px;
+            text-shadow: 2px 2px #ff00ff;
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            color: #00ffff;
+            font-size: 12px;
+        }
+
+        .back-link a {
+            color: #00ffff;
+            text-decoration: none;
+            border: 1px solid #00ffff;
+            padding: 2px 5px;
+        }
+
+        .back-link a:hover {
+            background-color: #00ffff;
+            color: #000000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        table.awg {
+            background-color: #001100;
+            border: 2px solid #00ff00;
+        }
+
+        th {
+            background-color: #00ff00;
+            color: #000000;
+            padding: 10px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #00ff00;
+        }
+
+        td {
+            padding: 8px 10px;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+
+        tr:nth-child(even) {
+            background-color: #000000;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #001100;
+        }
+
+        tr:hover {
+            background-color: #003300;
+            color: #ffff00;
+        }
+
+        .valor {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .categoria {
+            color: #ffff00;
+            font-weight: bold;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 16px;
+            border-bottom: 2px solid #ffff00;
+            padding-bottom: 8px;
+        }
+
+        .info-box {
+            border: 2px solid #00ff00;
+            padding: 12px;
+            margin: 15px 0;
+            background-color: #001100;
+        }
+
+        .info-title {
+            color: #ffff00;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .info-content {
+            color: #00ccff;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .small-text {
+            font-size: 11px;
+            color: #00ccff;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #00ff00;
+            color: #00ffff;
+            font-size: 12px;
+        }
+
+        .observacao {
+            background-color: #003300;
+            border-left: 3px solid #00ff00;
+            padding: 8px;
+            margin: 10px 0;
+            color: #00ff00;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ TABELA AWG</h1>
+            <p style="color: #00ffff; margin-top: 5px;">American Wire Gauge - Fios e Cabos</p>
+            <div class="back-link" style="margin-top: 10px;">
+                <a href="index.html">◄ Voltar ao Início</a>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <div class="info-title">ℹ O que é AWG?</div>
+            <div class="info-content">
+                AWG (American Wire Gauge) é um padrão de bitola de fios elétricos usados nos EUA e em muitos países.
+                Quanto menor o número AWG, maior a área de seção do fio (e menor a resistência).
+                A cada 3 passos da série, a área é aproximadamente duplicada.
+            </div>
+        </div>
+
+        <div class="categoria">▶ Tabela de Fios AWG (Cobre Nu)</div>
+
+        <p class="small-text" style="margin-bottom: 10px;">
+            Tabela com os principais valores AWG utilizados em eletrônica e eletricidade
+        </p>
+
+        <table class="awg">
+            <thead>
+                <tr>
+                    <th>AWG</th>
+                    <th>Diâmetro (mm)</th>
+                    <th>Seção (mm²)</th>
+                    <th>Resistência (Ω/km)</th>
+                    <th>Capacidade de Corrente (A)*</th>
+                    <th>Aplicação Comum</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="valor">30</span></td>
+                    <td>0,255</td>
+                    <td>0,051</td>
+                    <td>340</td>
+                    <td>0,5</td>
+                    <td>Conexões internas, PCB</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">28</span></td>
+                    <td>0,321</td>
+                    <td>0,081</td>
+                    <td>215</td>
+                    <td>1</td>
+                    <td>Jumpers, conexões lógica</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">26</span></td>
+                    <td>0,404</td>
+                    <td>0,128</td>
+                    <td>135</td>
+                    <td>1,5</td>
+                    <td>Jumpers, circuitos lógica</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">24</span></td>
+                    <td>0,511</td>
+                    <td>0,205</td>
+                    <td>85</td>
+                    <td>3</td>
+                    <td>Prototipagem, jumpers</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">22</span></td>
+                    <td>0,644</td>
+                    <td>0,326</td>
+                    <td>53</td>
+                    <td>5</td>
+                    <td>Fios de rede, prototipagem</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">20</span></td>
+                    <td>0,812</td>
+                    <td>0,518</td>
+                    <td>33</td>
+                    <td>10</td>
+                    <td>Circuitos de média potência</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">18</span></td>
+                    <td>1,024</td>
+                    <td>0,823</td>
+                    <td>21</td>
+                    <td>16</td>
+                    <td>Circuitos de potência, fonte</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">16</span></td>
+                    <td>1,291</td>
+                    <td>1,31</td>
+                    <td>13</td>
+                    <td>22</td>
+                    <td>Alimentação, motores pequenos</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">14</span></td>
+                    <td>1,628</td>
+                    <td>2,08</td>
+                    <td>8,4</td>
+                    <td>32</td>
+                    <td>Circuitos de potência</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">12</span></td>
+                    <td>2,052</td>
+                    <td>3,31</td>
+                    <td>5,3</td>
+                    <td>48</td>
+                    <td>Alimentação, distribuição</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">10</span></td>
+                    <td>2,588</td>
+                    <td>5,26</td>
+                    <td>3,3</td>
+                    <td>64</td>
+                    <td>Alimentação principal</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">8</span></td>
+                    <td>3,264</td>
+                    <td>8,37</td>
+                    <td>2,1</td>
+                    <td>96</td>
+                    <td>Distribuição de potência</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">6</span></td>
+                    <td>4,115</td>
+                    <td>13,3</td>
+                    <td>1,3</td>
+                    <td>128</td>
+                    <td>Painéis de distribuição</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">4</span></td>
+                    <td>5,189</td>
+                    <td>21,1</td>
+                    <td>0,84</td>
+                    <td>180</td>
+                    <td>Entrada de serviço</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">2</span></td>
+                    <td>6,544</td>
+                    <td>33,6</td>
+                    <td>0,52</td>
+                    <td>240</td>
+                    <td>Entrada de serviço pesada</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">0</span></td>
+                    <td>8,252</td>
+                    <td>53,5</td>
+                    <td>0,33</td>
+                    <td>320</td>
+                    <td>Barramento de potência</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="observacao">
+            * Capacidade de corrente baseada em temperatura de 60°C com isolamento PVC/TW. 
+            Valores podem variar conforme temperatura ambiente, tipo de isolamento e agrupamento de cabos.
+            Consulte tabelas específicas para aplicações críticas.
+        </div>
+
+        <div class="categoria">▶ Conversão de Unidades</div>
+
+        <table class="awg" style="margin-bottom: 10px;">
+            <thead>
+                <tr>
+                    <th>AWG</th>
+                    <th>Diâmetro (polegadas)</th>
+                    <th>Seção (mils²)*</th>
+                    <th>Seção (mm²)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="valor">24</span></td>
+                    <td>0.0201</td>
+                    <td>404</td>
+                    <td>0,205</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">22</span></td>
+                    <td>0.0254</td>
+                    <td>640</td>
+                    <td>0,326</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">20</span></td>
+                    <td>0.0320</td>
+                    <td>1024</td>
+                    <td>0,518</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">18</span></td>
+                    <td>0.0403</td>
+                    <td>1624</td>
+                    <td>0,823</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">16</span></td>
+                    <td>0.0508</td>
+                    <td>2580</td>
+                    <td>1,31</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">14</span></td>
+                    <td>0.0641</td>
+                    <td>4107</td>
+                    <td>2,08</td>
+                </tr>
+                <tr>
+                    <td><span class="valor">12</span></td>
+                    <td>0.0808</td>
+                    <td>6530</td>
+                    <td>3,31</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="small-text">* 1 mil = 1/1000 de polegada | mil² = (mil)²</p>
+
+        <div class="categoria">▶ Guia Rápido de Seleção</div>
+
+        <div class="info-box">
+            <div class="info-title">📌 Dicas Práticas</div>
+            <div class="info-content">
+                <strong>Para Prototipagem (Eletrônica):</strong> Use AWG 22-24 para jumpers em breadboards e conexões lógica baixa corrente.
+                <br><br>
+                <strong>Para Circuitos de Potência Média:</strong> Use AWG 18-20 para fontes de alimentação e conexões de até 10A.
+                <br><br>
+                <strong>Para Alta Potência:</strong> Use AWG 12-14 ou superior para motores, aquecedores e cargas pesadas.
+                <br><br>
+                <strong>Regra de Ouro:</strong> Quando em dúvida, use um fio um ou dois AWG mais grosso (número menor) do que o calculado.
+                <br><br>
+                <strong>Distância Importa:</strong> Para cabos longos, use fios mais grossos para reduzir queda de tensão.
+                <br><br>
+                <strong>Fórmula Aproximada de Queda de Tensão:</strong>
+                <br>Queda (V) ≈ (2 × Comprimento × Corrente × Resistividade) / Área
+            </div>
+        </div>
+
+        <div class="categoria">▶ Comparação Rápida</div>
+
+        <p class="small-text" style="margin-bottom: 10px;">
+            Cada 3 passos de AWG reduz à metade a resistência (aumenta a área em ~2x)
+        </p>
+
+        <table class="awg">
+            <thead>
+                <tr>
+                    <th>Comparação</th>
+                    <th>AWG 24</th>
+                    <th>AWG 22</th>
+                    <th>AWG 20</th>
+                    <th>AWG 18</th>
+                    <th>AWG 16</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Seção</strong></td>
+                    <td>0,205</td>
+                    <td>0,326</td>
+                    <td>0,518</td>
+                    <td>0,823</td>
+                    <td>1,31</td>
+                </tr>
+                <tr>
+                    <td><strong>Resistência</strong></td>
+                    <td>85 Ω/km</td>
+                    <td>53 Ω/km</td>
+                    <td>33 Ω/km</td>
+                    <td>21 Ω/km</td>
+                    <td>13 Ω/km</td>
+                </tr>
+                <tr>
+                    <td><strong>Corrente Máx</strong></td>
+                    <td>3 A</td>
+                    <td>5 A</td>
+                    <td>10 A</td>
+                    <td>16 A</td>
+                    <td>22 A</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>© 2026 Diego Cruz | Referência Retro de Eletrônica</p>
+            <p style="margin-top: 10px;">
+                <a href="index.html" style="color: #ffff00; text-decoration: none;">Home</a> |
+                <a href="transistores.html" style="color: #ffff00; text-decoration: none;">Transistores</a> |
+                <a href="resistores.html" style="color: #ffff00; text-decoration: none;">Resistores</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

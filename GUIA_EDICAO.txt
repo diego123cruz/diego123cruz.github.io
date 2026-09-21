@@ -1,0 +1,141 @@
+╔════════════════════════════════════════════════════════════════╗
+║     GUIA RÁPIDO DE EDIÇÃO - Site Retro Diego Cruz            ║
+║     Última atualização: 2026                                  ║
+╚════════════════════════════════════════════════════════════════╝
+
+📌 ESTRUTURA DOS ARQUIVOS:
+
+  index.html          ← Página inicial (comece por aqui!)
+  projetos.html       ← Lista de projetos GitHub
+  transistores.html   ← Tabela de transistores
+  resistores.html     ← Código de cores de resistores
+  awg.html            ← Tabela de bitolas de fio AWG
+  README.md           ← Documentação
+  GUIA_EDICAO.txt     ← Este arquivo
+
+
+🖊️ COMO EDITAR (SUPER FÁCIL!):
+
+1. Clique direito em qualquer arquivo .html
+2. Escolha "Abrir com" → "Bloco de Notas" (ou outro editor)
+3. Procure o texto que quer mudar
+4. Mude! (sem medo, é só texto)
+5. Ctrl+S para salvar
+6. Abra o arquivo no navegador para ver a mudança
+
+
+🎯 LOCAIS MAIS COMUNS PARA EDITAR:
+
+├─ Mudar seu nome na página inicial:
+│  Procure por: <h1>DIEGO CRUZ</h1>
+│  Mude para:    <h1>SEU NOME AQUI</h1>
+│
+├─ Mudar o subtítulo:
+│  Procure por: <p class="tagline">[ Z80 ENTHUSIAST & RETRO COMPUTING ]</p>
+│  Mude para:    <p class="tagline">[ Seu tagline aqui ]</p>
+│
+├─ Mudar mensagem de boas-vindas:
+│  Procure por: <p class="welcome">Bem-vindo ao site!</p>
+│  Mude para:    <p class="welcome">Sua mensagem aqui</p>
+│
+├─ Adicionar novo link na página inicial:
+│  Procure por: <ul class="link-list">
+│  Adicione:     <li><a href="arquivo.html">Seu Link</a></li>
+│
+└─ Mudar cor de texto principal:
+   Procure por: color: #00ff00;  (verde)
+   Mude para:   color: #ffff00;  (amarelo)
+                color: #00ffff;  (ciano)
+                color: #ff00ff;  (magenta)
+
+
+📋 CORES DISPONÍVEIS (Estilo Retro):
+
+  #00ff00  = Verde
+  #ffff00  = Amarelo
+  #00ffff  = Ciano
+  #ff00ff  = Magenta
+  #ff0000  = Vermelho
+  #ffffff  = Branco
+  #000000  = Preto
+  #000080  = Azul escuro
+
+
+🔗 ADICIONAR UMA NOVA PÁGINA:
+
+1. Copie um arquivo .html existente (por exemplo, transistores.html)
+2. Abra com o editor de texto
+3. Mude o <title>: <title>Sua Página - Diego Cruz</title>
+4. Mude o <h1>: <h1>SEU TÍTULO AQUI</h1>
+5. Mude o conteúdo das tabelas/texto
+6. Salve com um novo nome (tipo: "minha_pagina.html")
+7. Edite o index.html e adicione um link:
+
+   <li><a href="minha_pagina.html">Minha Página</a></li>
+
+
+💡 DICAS IMPORTANTES:
+
+✓ Sempre salve ANTES de testar no navegador
+✓ Se quebrou algo, desfaça com Ctrl+Z
+✓ Mantenha os nomes dos arquivos em MINÚSCULAS e SEM ESPAÇOS
+✓ Se adicionar imagens, salve na mesma pasta dos .html
+✓ Para imagem: <img src="imagem.jpg" alt="descrição">
+✓ Nunca delete <html>, <head>, <body> - são essenciais!
+
+
+⚠️  SE ALGO QUEBROU:
+
+1. Redownload do arquivo original
+2. Copie seu texto para um novo arquivo
+3. Salve novamente
+4. Abra no navegador
+
+
+🎨 PERSONALIZAÇÕES FÁCEIS:
+
+Mudar cor do fundo inteiro:
+  background-color: #000080;  (azul naval)
+  → Mude para: #000000;  (preto) ou #333333;  (cinza)
+
+Mudar cor da borda/moldura:
+  border: 3px solid #00ff00;
+  → Mude #00ff00; para outra cor
+
+Mudar tamanho da fonte:
+  font-size: 14px;
+  → Mude 14px; para 12px, 16px, 18px, etc
+
+
+📞 ESTRUTURA BÁSICA DE UMA PÁGINA:
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Seu Título Aqui</title>
+    <style>
+        /* Estilos CSS aqui */
+    </style>
+</head>
+<body>
+    <!-- Seu conteúdo aqui -->
+</body>
+</html>
+
+
+✨ PRÓXIMOS PASSOS:
+
+1. Edite seu nome em index.html
+2. Crie uma página "Sobre" com sua bio
+3. Crie uma página "Contato"
+4. Adicione mais tabelas de eletrônica
+5. Hospede em um servidor web (GitHub Pages, Netlify, etc)
+
+
+═════════════════════════════════════════════════════════════════
+
+Dúvidas? Edite um arquivo de cada vez e teste no navegador!
+Happy hacking! 🎮
+
+═════════════════════════════════════════════════════════════════

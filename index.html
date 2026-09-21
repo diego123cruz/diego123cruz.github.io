@@ -1,49 +1,256 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width" />
-  <title>intelHexToHex</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diego Cruz - Retro Homepage</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000080;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(255, 0, 255, 0.03),
+                    rgba(255, 0, 255, 0.03) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            font-family: 'MS Sans Serif', Arial, sans-serif;
+            color: #00ff00;
+            font-size: 14px;
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        /* Scanlines effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 9999;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 3px solid #00ff00;
+            background-color: #000000;
+            box-shadow: 0 0 10px #00ff00, inset 0 0 10px rgba(0, 255, 0, 0.1);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed #00ff00;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #ffff00;
+            font-size: 36px;
+            text-shadow: 2px 2px #ff00ff, 4px 4px #00ffff;
+            margin-bottom: 10px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            color: #ff00ff;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .welcome {
+            color: #00ffff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+            color: #ff0000;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .section {
+            margin-bottom: 25px;
+            border: 2px solid #00ff00;
+            padding: 15px;
+            background-color: #001100;
+        }
+
+        .section-title {
+            background-color: #00ff00;
+            color: #000000;
+            padding: 5px 10px;
+            margin: -15px -15px 15px -15px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .link-list {
+            list-style: none;
+        }
+
+        .link-list li {
+            margin-bottom: 8px;
+        }
+
+        .link-list a {
+            color: #ffff00;
+            text-decoration: none;
+            border: 1px solid #ffff00;
+            padding: 3px 8px;
+            display: inline-block;
+            background-color: #003300;
+            transition: all 0.2s;
+        }
+
+        .link-list a:hover {
+            background-color: #ffff00;
+            color: #000000;
+            box-shadow: 0 0 5px #ffff00;
+        }
+
+        .link-list a::before {
+            content: '▶ ';
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #00ff00;
+            color: #00ffff;
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: #ffff00;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            border: 0;
+            height: 2px;
+            background: linear-gradient(to right, #00ff00, #ff00ff, #00ffff, #ffff00, #00ff00);
+            margin: 15px 0;
+        }
+
+        .status-bar {
+            background-color: #00ff00;
+            color: #000000;
+            padding: 2px 4px;
+            margin-top: 10px;
+            font-size: 11px;
+            border: 1px solid #cccccc;
+        }
+
+        /* ASCII art effect */
+        .ascii-art {
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            color: #00ff00;
+            text-align: center;
+            margin: 15px 0;
+            font-size: 12px;
+            line-height: 1.2;
+        }
+    </style>
 </head>
 <body>
-  <p>Insira um nome com no máximo 16 letras:</p>
-  <input style="text-transform:uppercase" type="text" id="inputText" maxlength="16">
-  
-  
+    <div class="container">
+        <div class="header">
+            <h1>DIEGO CRUZ</h1>
+            <p class="tagline">[ Z80 ENTHUSIAST & RETRO COMPUTING ]</p>
+            <p class="welcome">Bem-vindo ao site! <span class="blink">●</span></p>
+            <div class="ascii-art">
+                ╔════════════════════════════════════════╗
+                ║   PERSONAL RETRO HOMEPAGE v1.0        ║
+                ║   Vintage Windows 95 Nostalgia        ║
+                ╚════════════════════════════════════════╝
+            </div>
+        </div>
 
+        <div class="section">
+            <div class="section-title">📱 MEUS PROJETOS (GitHub)</div>
+            <ul class="link-list">
+                <li><a href="projetos.html">Ver Todos os Projetos</a></li>
+            </ul>
+            <p style="margin-top: 10px; color: #00ccff; font-size: 12px;">
+                Principais repositórios: Z80Mini, Z80_microprocessador, Z80CPM, NASCOM_BASIC_4.7
+            </p>
+        </div>
 
-  <p>Selecione o arquivo com o código em intelHex:</p>
-  <input type="file" id="fileInput"/>
-  <br>
-  <textarea id="inputHex" name="hex" rows="8" cols="67" style="width: 550px;"></textarea>
-  <br>
+        <div class="divider"></div>
 
-  <button onclick="convertTextToHex(false)">Converter</button>
-  <button onclick="convertTextToHex(true)">Converter + Append</button>
+        <div class="section">
+            <div class="section-title">⚡ ELETRÔNICA & COMPONENTES</div>
+            <ul class="link-list">
+                <li><a href="transistores.html">Transistores Comuns</a></li>
+                <li><a href="resistores.html">Tabela de Resistores (Código de Cores)</a></li>
+                <li><a href="awg.html">Tabela AWG (Fios/Cabos)</a></li>
+            </ul>
+        </div>
+        
+        <div class="divider"></div>
 
-  <form name="frmConvert" action="">
-    <p>Hex string:</p>
-      <p>
-    <textarea id="outputHex" name="hex" rows="8" cols="67" style="width: 550px;"></textarea>
-    </p>
-    <!-- <p>Cleaned input:</p>
-      <p><input type="text" name="cleaned_hex" readonly="readonly" value="" style="width: 550px;"></p>				      
-    <p>Name of file to create:</p>
-      <p>
-      -->
+        <div class="section">
+            <div class="section-title">⚡ Computador Hipotetico - 8bits</div>
+            <ul class="link-list">
+                <li><a href="computador-hipotetico-8bits.html">Assembler/Simulador</a></li>
+            </ul>
+        </div>
 
-    <input type="text" name="filename" value="file.bin" style="width: 550px;">
-    </p>	  
+        <div class="divider"></div>
 
-    <p>
-      <button type=button name="btnConvert"
-        onclick="Convert()">
-        Convert
-      </button>
-    </p>
-  </form>
+        <div class="section">
+            <div class="section-title">📂 NAVEGAÇÃO</div>
+            <p style="margin-bottom: 10px;">Escolha um tópico para continuar:</p>
+            <ul class="link-list">
+                <li><a href="#sobre">Sobre</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+        </div>
 
-  <script src="script.js"></script>
+        <div class="footer">
+            <p>© 2026 Diego Cruz | Construído com HTML puro (retro vibes)</p>
+            <p style="margin-top: 10px; font-size: 11px;">Melhor visualizado em 1024x768 ou superior</p>
+            <p style="margin-top: 5px;">
+                <a href="https://github.com/diego123cruz" target="_blank">GitHub</a> 
+                | Retro Internet |
+                <span style="color: #ff00ff;">Nostalgia Alert</span>
+            </p>
+            <div class="status-bar">Ready</div>
+        </div>
+    </div>
 </body>
 </html>
