@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tape Nestor Z80 · Enviar dados por áudio</title>
+<style>
+  :root{
+    --bg:#0a100c;
+    --board:#132a1d;
+    --ink:#dff3e6;
+    --muted:#71917c;
+    --line:#234a34;
+    --amber:#ffb400;
+    --green:#39ff7a;
+    --red:#ff4444;
+    --purple:#e14bff;
+    --mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+    --sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--sans);
+    min-height:100vh; padding:18px;
+  }
+  h1{font-size:1.3rem; margin:0 0 4px; letter-spacing:.02em;}
+  h2{font-size:.95rem; color:var(--muted); font-weight:600; margin:0 0 10px;}
+  .tag{
+    display:inline-block; font-family:var(--mono); font-size:.68rem;
+    color:var(--muted); border:1px solid var(--line); border-radius:3px;
+    padding:1px 6px; margin-left:8px; vertical-align:middle;
+  }
+  header{
+    max-width:900px; margin:0 auto 16px; border-bottom:1px solid var(--line);
+    padding-bottom:12px;
+  }
+  header p{margin:2px 0 0; color:var(--muted); font-size:.85rem; max-width:65ch;}
+  .wrap{max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:16px;}
+  .card{background:var(--board); border:1px solid var(--line); border-radius:10px; padding:16px;}
+  .dropzone{
+    border:2px dashed var(--line); border-radius:8px; padding:26px; text-align:center;
+    color:var(--muted); cursor:pointer; font-size:.85rem;
+  }
+  .dropzone.drag{border-color:var(--amber); color:var(--amber);}
+  input[type=file]{display:none;}
+  .fields{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-top:14px;}
+  label{font-size:.72rem; color:var(--muted); display:block; margin-bottom:4px;}
+  input[type=text]{
+    width:100%; background:#081911; color:var(--green); border:1px solid var(--line);
+    border-radius:5px; padding:7px 8px; font-family:var(--mono); font-size:.85rem;
+  }
+  input[type=text]:focus{outline:none; border-color:var(--amber);}
+  .info{
+    margin-top:14px; display:flex; flex-wrap:wrap; gap:18px; font-family:var(--mono); font-size:.78rem;
+  }
+  .info div span.k{display:block; color:var(--muted); font-size:.62rem;}
+  .info div span.v{color:var(--ink); font-size:.95rem;}
+  .warn{color:var(--red); font-size:.78rem; margin-top:8px; font-family:var(--mono);}
+  .toolbar{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; align-items:center;}
+  button{
+    font-family:var(--sans); font-size:.82rem; color:var(--ink);
+    background:#183826; border:1px solid var(--line); border-radius:5px;
+    padding:8px 14px; cursor:pointer;
+  }
+  button:hover:not(:disabled){border-color:var(--amber); color:var(--amber);}
+  button:disabled{opacity:.35; cursor:not-allowed;}
+  button.primary{background:#1f5236; border-color:#2f7d4f; color:#eaffef; font-weight:600;}
+  button.primary:hover:not(:disabled){border-color:var(--green); color:var(--green);}
+  button.stop{background:#5c1414; border-color:var(--red); color:#ffdada;}
+  .progress-outer{
+    margin-top:14px; background:#081911; border:1px solid var(--line); border-radius:6px;
+    height:20px; overflow:hidden; position:relative;
+  }
+  .progress-inner{
+    height:100%; width:0%; background:var(--purple); box-shadow:0 0 8px var(--purple);
+    transition:width .08s linear;
+  }
+  .progress-lbl{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:.68rem; color:var(--ink); mix-blend-mode:difference;
+  }
+  .volrow{display:flex; align-items:center; gap:8px; margin-top:12px; font-size:.75rem; color:var(--muted);}
+  .volrow input{flex:1; max-width:200px;}
+  #hexPreview{
+    font-family:var(--mono); font-size:.68rem; color:var(--muted); white-space:pre-wrap;
+    word-break:break-all; margin-top:10px; max-height:180px; overflow:auto;
+    background:#081911; border:1px solid var(--line); border-radius:6px; padding:8px;
+  }
+  details{margin-top:14px; border-top:1px dashed var(--line); padding-top:10px;}
+  summary{cursor:pointer; font-size:.8rem; color:var(--muted);}
+  .refbody{font-size:.78rem; color:var(--muted); line-height:1.6; margin-top:8px;}
+  .refbody code{color:var(--green);}
+  .refbody table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:.72rem; margin-top:6px;}
+  .refbody td{padding:2px 6px 2px 0;}
+  footer{max-width:900px; margin:22px auto 0; color:var(--muted); font-size:.72rem; text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Tape Nestor Z80 · Enviar dados por áudio<span class="tag">calibrado pro k7.z80</span></h1>
+  <p>Gera áudio no formato do carregador de fita <code>k7.z80</code> do Nestor Z80 — cabeçalho, dados e checksum idênticos ao original, e nas frequências <b>reais</b> que o Nestor usa (~977.5 Hz e ~2283.1 Hz, calculadas a partir dos ciclos de CPU do <code>k7.z80</code> a 4MHz — não os "apelidos" 1kHz/2kHz do código-fonte).</p>
+</header>
+
+<div class="wrap">
+
+  <section class="card">
+    <h2>1. Arquivo</h2>
+    <div class="dropzone" id="dropzone">
+      Arraste um arquivo <code>.bin</code> aqui, ou clique para escolher
+      <input type="file" id="fileInput" accept=".bin">
+    </div>
+    <div class="warn" id="fileWarn"></div>
+
+    <div class="fields">
+      <div>
+        <label>Título (hex, 4 dígitos)</label>
+        <input type="text" id="titleInput" maxlength="4" value="0000">
+      </div>
+      <div>
+        <label>Endereço de destino (RAM, hex)</label>
+        <input type="text" id="destInput" value="8000" maxlength="4">
+      </div>
+    </div>
+    <p style="color:var(--muted); font-size:.78rem; margin:6px 0 0;">
+      É o endereço do seu <code>.org</code> — para onde o Nestor vai gravar
+      o primeiro byte do arquivo. O <code>.bin</code> bruto não guarda essa
+      informação, então precisa dizer aqui.
+    </p>
+
+    <details style="margin-top:10px;">
+      <summary style="cursor:pointer; font-size:.78rem; color:var(--muted);">Avançado: enviar só um trecho do arquivo</summary>
+      <div class="fields" style="margin-top:10px;">
+        <div>
+          <label>Do byte (deslocamento no arquivo, hex)</label>
+          <input type="text" id="fileStartInput" value="0000" maxlength="4">
+        </div>
+        <div>
+          <label>Até o byte (hex, inclusive)</label>
+          <input type="text" id="fileEndInput" value="0000" maxlength="4">
+        </div>
+      </div>
+    </details>
+
+    <div class="info">
+      <div><span class="k">bytes carregados</span><span class="v" id="infoLen">—</span></div>
+      <div><span class="k">bytes a enviar</span><span class="v" id="infoRange">—</span></div>
+      <div><span class="k">checksum</span><span class="v" id="infoChk">—</span></div>
+      <div><span class="k">duração estimada</span><span class="v" id="infoDur">—</span></div>
+    </div>
+
+    <pre id="hexPreview">— carregue um arquivo .bin —</pre>
+  </section>
+
+  <section class="card">
+    <h2>2. Gerar e enviar</h2>
+    <div class="toolbar">
+      <button class="primary" id="btnGenerate" disabled>Gerar áudio</button>
+      <button id="btnPlay" disabled>▶ Reproduzir</button>
+      <button id="btnStop" class="stop" disabled>■ Parar</button>
+      <button id="btnWav" disabled>Baixar .wav</button>
+    </div>
+    <div class="volrow">
+      <span>Volume</span>
+      <input type="range" id="volume" min="0" max="100" value="90">
+    </div>
+    <div class="progress-outer">
+      <div class="progress-inner" id="progressBar"></div>
+      <div class="progress-lbl" id="progressLbl">parado</div>
+    </div>
+    <div id="selfTestResult" style="margin-top:10px; font-family:var(--mono); font-size:.78rem;"></div>
+  </section>
+
+  <section class="card">
+    <h2>3. Testar os tons (opcional)</h2>
+    <p style="color:var(--muted); font-size:.82rem; margin-top:0;">
+      Toca cada tom continuamente — útil para conferir num osciloscópio, ou
+      só para ouvir a diferença entre os dois tons reais do Nestor
+      (<b>~977.5 Hz</b> e <b>~2283.1 Hz</b>) antes de gerar a fita completa.
+    </p>
+    <div class="toolbar">
+      <button id="btnTone1k">🔊 Tocar tom baixo (~977.5 Hz)</button>
+      <button id="btnTone2k">🔊 Tocar tom alto (~2283.1 Hz)</button>
+      <button id="btnToneStop" class="stop" disabled>■ Parar tom</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>Como funciona o protocolo (referência)</summary>
+      <div class="refbody">
+        <p>Mesma codificação do carregador de fita <code>k7.z80</code> do Nestor Z80,
+        nas frequências <b>reais</b> que ele usa — calculadas contando os T-states da
+        rotina <code>TOM</code> a 4MHz, não os "apelidos" 1kHz/2kHz do código-fonte:</p>
+        <table>
+          <tr><td>tom baixo (V1KHZ)</td><td>~977.5 Hz — meio-ciclo de 511.5µs</td></tr>
+          <tr><td>tom alto (V2KHZ)</td><td>~2283.1 Hz — meio-ciclo de 219.0µs</td></tr>
+        </table>
+        <p>Cada bit é uma sequência de ciclos das duas frequências (a duração total
+        por bit não é exatamente igual entre 0 e 1, porque a razão real entre os
+        tons do Nestor não é exatamente 2:1):</p>
+        <table>
+          <tr><td>bit 0</td><td>8 ciclos @tom alto + 2 ciclos @tom baixo (~5.55ms)</td></tr>
+          <tr><td>bit 1</td><td>4 ciclos @tom alto + 4 ciclos @tom baixo (~5.84ms)</td></tr>
+        </table>
+        <p>Cada byte é enviado como no formato serial clássico: <code>start(0)</code> +
+        8 bits de dado (<b>LSB primeiro</b>) + <code>stop(1)</code>.</p>
+        <p>Estrutura completa do áudio (idêntica à rotina <code>GFITA</code> do <code>k7.z80</code>):</p>
+        <table>
+          <tr><td>Leader (sincronismo)</td><td>4000 ciclos @tom baixo (~4s)</td></tr>
+          <tr><td>Cabeçalho</td><td>7 bytes: título(2) + endereço inicial(2, 16 bits) + endereço final(2, 16 bits) + checksum(1)</td></tr>
+          <tr><td>Gap</td><td>2000 ciclos @tom alto (~1s)</td></tr>
+          <tr><td>Dados</td><td>bytes do endereço inicial ao final, inclusive (até 64KB)</td></tr>
+          <tr><td>Trailer</td><td>4000 ciclos @tom alto (~2s)</td></tr>
+        </table>
+        <p>O checksum é a soma (mod 256) de todos os bytes de dados enviados — igual
+        à rotina <code>CBYTES</code> do <code>k7.z80</code>.</p>
+        <p><b>Importante:</b> esta página só <i>gera e toca o áudio</i> — é o lado
+        "SAVE". Para carregar de volta, use o menu <b>[A] LOAD</b> do próprio
+        Nestor Z80 (rotina <code>load_tape</code>/<code>LFITA</code>), encostando
+        a saída do dispositivo que está tocando este áudio na entrada de fita
+        (K7) do Nestor.</p>
+      </div>
+    </details>
+  </section>
+
+</div>
+
+<footer>Tape Nestor Z80 — gerador de áudio local, sem internet, nas frequências reais do k7.z80.</footer>
+
+<script>
+"use strict";
+
+/* ============================================================
+   PROTOCOLO (constantes do k7.z80)
+   ============================================================ */
+// Frequências REAIS do Nestor Z80, não os "apelidos" 1kHz/2kHz.
+// O k7.z80 gera os tons por contagem de ciclos de CPU (rotina TOM,
+// V1KHZ=154, V2KHZ=64) calibrados para o clock de 4MHz do Nestor.
+// Fazendo a conta de T-states dessa rotina:
+//   V1KHZ (154) -> meio-ciclo de 511.5us -> ~977.5 Hz (não 1000!)
+//   V2KHZ (64)  -> meio-ciclo de 219.0us -> ~2283.1 Hz (não 2000!)
+const F1 = 977.517, F2 = 2283.105;    // tom "baixo" e tom "alto" reais do Nestor
+const ZERO_2K = 8, ZERO_1K = 2;       // bit 0
+const UM_2K = 4, UM_1K = 4;           // bit 1
+const LEADER_CYCLES = 4000;           // @F1
+const GAP_CYCLES = 2000;              // @F2
+const TRAILER_CYCLES = 4000;          // @F2
+// Nota: a taxa de amostragem NUNCA é fixada aqui — sempre usamos
+// ctx.sampleRate (a taxa real do dispositivo/navegador). Um valor
+// fixo (ex.: 44100) faria o navegador reamostrar o áudio quando o
+// hardware roda em outra taxa (48000 é comum), o que borra as
+// bordas da onda quadrada e atrapalha a decodificação no Arduino.
+
+let fileBytes = null;      // Uint8Array do .bin carregado
+let audioCtx = null;
+let currentBuffer = null;  // AudioBuffer gerado
+let sourceNode = null;
+let playStartTime = 0;
+let rafHandle = null;
+
+/* ============================================================
+   MONTAGEM DOS TONS
+   ============================================================ */
+function pushBit(segs, bit){
+  if(bit){
+    segs.push([F2, UM_2K]);
+    segs.push([F1, UM_1K]);
+  } else {
+    segs.push([F2, ZERO_2K]);
+    segs.push([F1, ZERO_1K]);
+  }
+}
+function pushByte(segs, byteVal){
+  pushBit(segs, 0); // start
+  for(let i=0;i<8;i++) pushBit(segs, (byteVal>>i)&1); // LSB primeiro
+  pushBit(segs, 1); // stop
+}
+function buildSegments(header, data){
+  const segs = [];
+  segs.push([F1, LEADER_CYCLES]);
+  header.forEach(b=>pushByte(segs,b));
+  segs.push([F2, GAP_CYCLES]);
+  data.forEach(b=>pushByte(segs,b));
+  segs.push([F2, TRAILER_CYCLES]);
+  return segs;
+}
+function segmentsDuration(segs){
+  let t=0;
+  for(const [f,cycles] of segs) t += cycles/f;
+  return t;
+}
+function renderSamples(segs, amplitude, sampleRate){
+  // Dimensiona o buffer pela soma EXATA das amostras já arredondadas
+  // (não pela duração "ideal" não-arredondada) — com frequências que não
+  // dividem a taxa de amostragem de forma exata (como as reais do Nestor),
+  // cada meio-ciclo arredonda sempre pra cima, e isso acumula um excedente
+  // que, numa transmissão longa, faz o buffer "ideal" cortar o final.
+  let totalSamples = 0;
+  for(const [freq,cycles] of segs){
+    const halfSamples = Math.max(1, Math.round((1/freq/2)*sampleRate));
+    totalSamples += halfSamples * cycles * 2;
+  }
+  const data = new Float32Array(totalSamples);
+  let idx = 0;
+  for(const [freq,cycles] of segs){
+    const halfSamples = Math.max(1, Math.round((1/freq/2)*sampleRate));
+    let level = 1;
+    const halves = cycles*2;
+    for(let h=0; h<halves; h++){
+      const end = idx+halfSamples;
+      for(; idx<end; idx++) data[idx] = level*amplitude;
+      level = -level;
+    }
+  }
+  return data;
+}
+
+/* ============================================================
+   VERIFICAÇÃO DE FORMATO (simula o decodificador do tape.ino)
+   ============================================================
+   Extrai, das amostras de áudio REALMENTE geradas, a duração de
+   cada pulso "alto" (em microssegundos) — exatamente o que
+   pulseIn(pin, HIGH, ...) mediria no Arduino — e roda o MESMO
+   algoritmo de decodificação do tape.ino sobre essa lista de
+   pulsos. Se o resultado bater com o arquivo original, o áudio
+   está garantidamente no formato que o receptor espera.
+*/
+function extractPulses(samples, sampleRate){
+  const pulses = [];
+  let i = 0;
+  const n = samples.length;
+  while(i<n && samples[i] <= 0) i++; // pula eventual início não-positivo
+  while(i<n){
+    if(samples[i] > 0){
+      const startIdx = i;
+      while(i<n && samples[i] > 0) i++;
+      pulses.push(Math.round((i-startIdx) / sampleRate * 1e6)); // duração em us
+    } else {
+      i++;
+    }
+  }
+  return pulses;
+}
+
+function decodeSelfTest(pulses){
+  let idx = 0;
+  function raw(){ return idx < pulses.length ? pulses[idx++] : 0; }
+  let pendingVal = null;
+  function next(){
+    if(pendingVal !== null){ const v = pendingVal; pendingVal = null; return v; }
+    return raw();
+  }
+  function pushBack(v){ pendingVal = v; }
+  const isShortUs = us => us>0 && us<365; // meio do caminho entre 219us e 511.5us reais do Nestor
+  const isLongUs = us => us>=365;
+
+  function waitLeader(){
+    let longRun=0;
+    while(true){
+      const p = raw();
+      if(p===0) return false;
+      if(isLongUs(p)){ longRun++; if(longRun>=100) break; }
+      else longRun=0;
+    }
+    while(true){
+      const p = raw();
+      if(p===0) return false;
+      if(isShortUs(p)){ pushBack(p); return true; }
+    }
+  }
+  function readBit(){
+    let shorts=0;
+    while(true){
+      const p = next();
+      if(p===0) return -1;
+      if(isShortUs(p)) shorts++; else break;
+    }
+    const bit = shorts>=6 ? 0 : 1;
+    const totalLongs = bit===0 ? 2 : 4;
+    for(let i=0;i<totalLongs-1;i++){ const p=next(); if(p===0) return -1; }
+    return bit;
+  }
+  function readByte(){
+    if(readBit()!==0) return -1;
+    let v=0;
+    for(let i=0;i<8;i++){ const b=readBit(); if(b<0) return -1; if(b) v|=(1<<i); }
+    if(readBit()!==1) return -1;
+    return v;
+  }
+
+  if(!waitLeader()) return {ok:false, error:'não sincronizou no leader'};
+  const header=[];
+  for(let i=0;i<7;i++){
+    const b = readByte();
+    if(b<0) return {ok:false, error:'erro no cabeçalho (byte '+i+')'};
+    header.push(b);
+  }
+  const start = header[2] | (header[3]<<8);
+  const end = header[4] | (header[5]<<8);
+  const chkExpected = header[6];
+  if(start>end || end>65535) return {ok:false, error:'faixa de endereços inválida no cabeçalho decodificado'};
+  const data=[];
+  for(let addr=start; addr<=end; addr++){
+    const b = readByte();
+    if(b<0) return {ok:false, error:'erro nos dados (endereço 0x'+addr.toString(16)+')'};
+    data.push(b);
+  }
+  let sum=0; for(const b of data) sum=(sum+b)&0xFF;
+  if(sum !== chkExpected) return {ok:false, error:'checksum não confere (esperado 0x'+chkExpected.toString(16)+', calculado 0x'+sum.toString(16)+')'};
+  return {ok:true, header, start, end, data};
+}
+
+function runSelfTest(segs, header, dataArr){
+  const el = document.getElementById('selfTestResult');
+  el.style.color = 'var(--muted)';
+  el.textContent = 'Verificando formato (simulando o tape.ino)...';
+
+  // usa amplitude cheia (independente do volume escolhido) para o teste,
+  // já que aqui o que importa é a forma dos pulsos, não o volume de audição.
+  const sr = ensureCtx().sampleRate;
+  const samples = renderSamples(segs, 1.0, sr);
+  const pulses = extractPulses(samples, sr);
+  const result = decodeSelfTest(pulses);
+
+  if(!result.ok){
+    el.style.color = 'var(--red)';
+    el.textContent = '✗ Falha na verificação: ' + result.error + ' — este áudio pode não ser lido corretamente pelo tape.ino.';
+    return;
+  }
+
+  const headerOk = header.length===result.header.length && header.every((v,i)=>v===result.header[i]);
+  const dataOk = dataArr.length===result.data.length && Array.from(dataArr).every((v,i)=>v===result.data[i]);
+
+  if(headerOk && dataOk){
+    el.style.color = 'var(--green)';
+    el.textContent = '✓ Verificado: ' + result.data.length + ' bytes decodificados batem 100% com o arquivo original — formato compatível com o tape.ino.';
+  } else {
+    el.style.color = 'var(--red)';
+    el.textContent = '✗ Falha na verificação: ' + (!headerOk ? 'cabeçalho decodificado diferente do enviado' : 'dados decodificados diferentes dos enviados') + '.';
+  }
+}
+
+/* ============================================================
+   ARQUIVO
+   ============================================================ */
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+dropzone.addEventListener('click', ()=> fileInput.click());
+['dragover','dragenter'].forEach(ev=> dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev=> dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.classList.remove('drag'); }));
+dropzone.addEventListener('drop', e=>{
+  const f = e.dataTransfer.files[0];
+  if(f) loadFile(f);
+});
+fileInput.addEventListener('change', e=>{
+  const f = e.target.files[0];
+  if(f) loadFile(f);
+});
+
+function loadFile(file){
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    let bytes = new Uint8Array(reader.result);
+    const warnEl = document.getElementById('fileWarn');
+    warnEl.textContent = '';
+    if(bytes.length > 65536){
+      warnEl.textContent = 'Arquivo tem ' + bytes.length + ' bytes; o Nestor Z80 endereça até 64KB, usando só os primeiros 65536.';
+      bytes = bytes.slice(0,65536);
+    }
+    fileBytes = bytes;
+    dropzone.textContent = file.name + ' (' + bytes.length + ' bytes) — clique para trocar';
+    document.getElementById('infoLen').textContent = bytes.length + ' bytes';
+    // por padrão, envia o arquivo INTEIRO (do byte 0 até o último) —
+    // o recorte é só para quem quer enviar um trecho específico.
+    document.getElementById('fileStartInput').value = '0000';
+    document.getElementById('fileEndInput').value = (bytes.length-1).toString(16).padStart(4,'0').toUpperCase();
+    document.getElementById('btnGenerate').disabled = false;
+    updatePreview();
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// Endereços do Nestor são de 16 bits (0000-FFFF).
+function parseHexWord(str, fallback){
+  const v = parseInt(String(str).replace('$','').replace(/^0x/i,''), 16);
+  return isNaN(v) ? fallback : (v & 0xFFFF);
+}
+
+function updatePreview(){
+  if(!fileBytes) return;
+  const fileStart = parseHexWord(document.getElementById('fileStartInput').value, 0);
+  const fileEnd = parseHexWord(document.getElementById('fileEndInput').value, fileBytes.length-1);
+  const dest = parseHexWord(document.getElementById('destInput').value, 0);
+  const pre = document.getElementById('hexPreview');
+  if(fileEnd < fileStart || fileEnd >= fileBytes.length){
+    document.getElementById('infoRange').textContent = '—';
+    document.getElementById('infoChk').textContent = '—';
+    document.getElementById('infoDur').textContent = '—';
+    pre.textContent = 'Recorte de arquivo inválido (deve ser >= inicial e < ' + fileBytes.length + ').';
+    document.getElementById('btnGenerate').disabled = true;
+    return;
+  }
+  const data = fileBytes.slice(fileStart, fileEnd+1);
+  const destEnd = dest + data.length - 1;
+  if(destEnd > 0xFFFF){
+    document.getElementById('infoRange').textContent = '—';
+    document.getElementById('infoChk').textContent = '—';
+    document.getElementById('infoDur').textContent = '—';
+    pre.textContent = 'Endereço de destino + tamanho do arquivo estoura 0xFFFF.';
+    document.getElementById('btnGenerate').disabled = true;
+    return;
+  }
+  document.getElementById('btnGenerate').disabled = false;
+  let sum = 0;
+  for(const b of data) sum = (sum + b) & 0xFF;
+  document.getElementById('infoRange').textContent = data.length + ' bytes -> RAM 0x' + dest.toString(16).padStart(4,'0').toUpperCase() + '–0x' + destEnd.toString(16).padStart(4,'0').toUpperCase();
+  document.getElementById('infoChk').textContent = '0x' + sum.toString(16).padStart(2,'0').toUpperCase();
+
+  const header = buildHeader(dest, destEnd, sum);
+  const segs = buildSegments(header, data);
+  const dur = segmentsDuration(segs);
+  document.getElementById('infoDur').textContent = dur.toFixed(1) + ' s';
+
+  let lines = [];
+  for(let i=0;i<data.length;i+=16){
+    const chunk = Array.from(data.slice(i,i+16)).map(b=>b.toString(16).padStart(2,'0').toUpperCase());
+    lines.push((dest+i).toString(16).padStart(4,'0').toUpperCase() + ':  ' + chunk.join(' '));
+  }
+  pre.textContent = lines.join('\n');
+}
+
+function buildHeader(start, end, checksum){
+  // No Nestor de verdade, o título é digitado no teclado hexadecimal
+  // (4 dígitos), exatamente como o endereço inicial/final — não são
+  // 2 caracteres de texto. Por isso interpretamos como palavra de 16
+  // bits, igual start/end.
+  const titulo = parseHexWord(document.getElementById('titleInput').value, 0);
+  const t0 = titulo & 0xFF;
+  const t1 = (titulo >> 8) & 0xFF;
+  return [t0, t1, start&0xFF, (start>>8)&0xFF, end&0xFF, (end>>8)&0xFF, checksum&0xFF];
+}
+
+['titleInput','destInput','fileStartInput','fileEndInput'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', updatePreview);
+});
+
+/* ============================================================
+   GERAÇÃO / REPRODUÇÃO
+   ============================================================ */
+function ensureCtx(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+
+/* ============================================================
+   TOM CONTÍNUO (calibração de hardware)
+   ============================================================ */
+let toneOsc = null, toneGain = null;
+
+function playTone(freq){
+  stopTone();
+  stopPlayback();
+  const ctx = ensureCtx();
+  const startNow = ()=>{
+    toneOsc = ctx.createOscillator();
+    toneOsc.type = 'square';
+    toneOsc.frequency.value = freq;
+    toneGain = ctx.createGain();
+    toneGain.gain.value = (+document.getElementById('volume').value)/100;
+    toneOsc.connect(toneGain).connect(ctx.destination);
+    toneOsc.start();
+    document.getElementById('btnToneStop').disabled = false;
+  };
+  // iOS Safari só libera o áudio de fato depois que a Promise de
+  // resume() resolve — agendar antes disso costuma sair mudo.
+  if(ctx.state === 'suspended') ctx.resume().then(startNow); else startNow();
+}
+
+function stopTone(){
+  if(toneOsc){
+    try{ toneOsc.stop(); }catch(e){}
+    toneOsc.disconnect();
+    toneOsc = null;
+  }
+  document.getElementById('btnToneStop').disabled = true;
+}
+
+document.getElementById('btnTone1k').addEventListener('click', ()=> playTone(F1));
+document.getElementById('btnTone2k').addEventListener('click', ()=> playTone(F2));
+document.getElementById('btnToneStop').addEventListener('click', stopTone);
+
+document.getElementById('btnGenerate').addEventListener('click', ()=>{
+  if(!fileBytes) return;
+  const fileStart = parseHexWord(document.getElementById('fileStartInput').value, 0);
+  const fileEnd = parseHexWord(document.getElementById('fileEndInput').value, fileBytes.length-1);
+  if(fileEnd < fileStart || fileEnd >= fileBytes.length) return;
+  const dest = parseHexWord(document.getElementById('destInput').value, 0);
+  const data = fileBytes.slice(fileStart, fileEnd+1);
+  const destEnd = dest + data.length - 1;
+  if(destEnd > 0xFFFF) return;
+  let sum = 0;
+  for(const b of data) sum = (sum + b) & 0xFF;
+  const header = buildHeader(dest, destEnd, sum);
+  const segs = buildSegments(header, data);
+  const amplitude = (+document.getElementById('volume').value)/100;
+
+  const ctx = ensureCtx();
+  const sr = ctx.sampleRate; // usa a taxa REAL do dispositivo, nunca um valor fixo
+  const samples = renderSamples(segs, amplitude, sr);
+  const buffer = ctx.createBuffer(1, samples.length, sr);
+  buffer.copyToChannel(samples, 0);
+  currentBuffer = buffer;
+
+  document.getElementById('btnPlay').disabled = false;
+  document.getElementById('btnWav').disabled = false;
+  document.getElementById('progressLbl').textContent = 'pronto — ' + buffer.duration.toFixed(1) + ' s';
+  document.getElementById('progressBar').style.width = '0%';
+
+  runSelfTest(segs, header, data);
+});
+
+document.getElementById('btnPlay').addEventListener('click', ()=>{
+  if(!currentBuffer) return;
+  const ctx = ensureCtx();
+  stopTone();
+  stopPlayback();
+  const startNow = ()=>{
+    sourceNode = ctx.createBufferSource();
+    sourceNode.buffer = currentBuffer;
+    sourceNode.connect(ctx.destination);
+    sourceNode.onended = ()=>{
+      document.getElementById('progressLbl').textContent = 'concluído';
+      document.getElementById('btnStop').disabled = true;
+      if(rafHandle) cancelAnimationFrame(rafHandle);
+    };
+    sourceNode.start();
+    playStartTime = ctx.currentTime;
+    document.getElementById('btnStop').disabled = false;
+    updateProgress();
+  };
+  // iOS Safari só libera o áudio de fato depois que a Promise de
+  // resume() resolve — agendar antes disso costuma sair mudo.
+  if(ctx.state === 'suspended') ctx.resume().then(startNow); else startNow();
+});
+
+document.getElementById('btnStop').addEventListener('click', stopPlayback);
+
+function stopPlayback(){
+  if(sourceNode){
+    try{ sourceNode.onended = null; sourceNode.stop(); }catch(e){}
+    sourceNode = null;
+  }
+  if(rafHandle) cancelAnimationFrame(rafHandle);
+  document.getElementById('btnStop').disabled = true;
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressLbl').textContent = 'parado';
+}
+
+function updateProgress(){
+  if(!sourceNode || !currentBuffer) return;
+  const elapsed = audioCtx.currentTime - playStartTime;
+  const pct = Math.min(100, (elapsed/currentBuffer.duration)*100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLbl').textContent = elapsed.toFixed(1) + ' / ' + currentBuffer.duration.toFixed(1) + ' s';
+  if(pct < 100) rafHandle = requestAnimationFrame(updateProgress);
+}
+
+/* ============================================================
+   EXPORTAR .WAV
+   ============================================================ */
+function bufferToWav(buffer){
+  const samples = buffer.getChannelData(0);
+  const sampleRate = buffer.sampleRate;
+  const blockAlign = 2, byteRate = sampleRate*blockAlign;
+  const dataSize = samples.length*2;
+  const arr = new ArrayBuffer(44+dataSize);
+  const view = new DataView(arr);
+  function writeStr(offset,str){ for(let i=0;i<str.length;i++) view.setUint8(offset+i, str.charCodeAt(i)); }
+  writeStr(0,'RIFF'); view.setUint32(4, 36+dataSize, true); writeStr(8,'WAVE');
+  writeStr(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true);
+  view.setUint16(22,1,true); view.setUint32(24,sampleRate,true);
+  view.setUint32(28,byteRate,true); view.setUint16(32,blockAlign,true); view.setUint16(34,16,true);
+  writeStr(36,'data'); view.setUint32(40,dataSize,true);
+  let offset=44;
+  for(let i=0;i<samples.length;i++){
+    const s = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(offset, s<0 ? s*0x8000 : s*0x7FFF, true);
+    offset += 2;
+  }
+  return new Blob([view], {type:'audio/wav'});
+}
+
+document.getElementById('btnWav').addEventListener('click', ()=>{
+  if(!currentBuffer) return;
+  const blob = bufferToWav(currentBuffer);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tape.wav';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+</script>
+</body>
+</html>
